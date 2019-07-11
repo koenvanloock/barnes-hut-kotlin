@@ -31,15 +31,28 @@ data class Fork(
         val se: Quad
 ): Quad() {
     override val centerX: Float = nw.centerX + nw.size / 2
-    override val centerY: Float = nw.centerX + nw.size / 2
+    override val centerY: Float = nw.centerY + nw.size / 2
     override val size = 2 * ne.size
     override val mass: Float = nw.mass + ne.mass + sw.mass + se.mass
-    override val massX: Float = if(mass != 0f)  nw.mass * nw.massX + ne.mass * ne.massX + sw.mass * sw.massX + se.mass * se.massX else 0f
-    override val massY: Float = if(mass != 0f)  nw.mass * nw.massY + ne.mass * ne.massY + sw.mass * sw.massY + se.mass * se.massY else 0f
+    override val massX: Float = if(mass != 0f)  (nw.mass * nw.massX + ne.mass * ne.massX + sw.mass * sw.massX + se.mass * se.massX ) / mass else centerX
+    override val massY: Float = if(mass != 0f)  (nw.mass * nw.massY + ne.mass * ne.massY + sw.mass * sw.massY + se.mass * se.massY) / mass else centerY
     override val total: Int = nw.total + ne.total + sw.total + se.total
-    override fun insert(body: Body): Quad {
-
-    }
+    override fun  insert(body: Body): Fork =
+        if (body.x < centerX + ne.size && body.y < centerY + ne.size) {
+            if (body.x < centerX) {
+                if (body.y < centerY) {
+                    Fork(nw.insert(body), ne, sw, se)
+                } else {
+                    Fork(nw, ne, sw.insert(body), se)
+                }
+            } else {
+                if (body.y < centerY) {
+                    Fork(nw, ne.insert(body), sw, se)
+                } else {
+                    Fork(nw, ne, sw, se.insert(body))
+                }
+            }
+        } else this
 }
 
 data class Leaf(override val centerX: Float,

@@ -1,5 +1,6 @@
 package company.tothepoint.barneshutsimulator.conctree
 
+import company.tothepoint.barneshutsimulator.model.Body
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
