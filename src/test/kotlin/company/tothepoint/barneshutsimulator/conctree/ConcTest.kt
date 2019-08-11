@@ -7,14 +7,14 @@ internal class ConcTest {
 
     @Test
     fun `a Fork with two leaves has level 1, size is the combined size of the leaves`() {
-        val fork  = Fork(Single(5), Chunk(arrayOf(9,0,2)))
+        val fork = Fork(Single(5), Chunk(arrayOf(9, 0, 2), 3, 2))
         assertThat(fork.size).isEqualTo(4)
         assertThat(fork.level).isEqualTo(1)
     }
 
     @Test
     fun `an Append with two leaves has level 1, size is the combined size of the leaves`() {
-        val append  = Append(Single(5), Chunk(arrayOf(9,0,2)))
+        val append = Append(Single(5), Chunk(arrayOf(9, 0, 2), 3, 2))
         assertThat(append.size).isEqualTo(4)
         assertThat(append.level).isEqualTo(1)
     }

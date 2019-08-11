@@ -24,7 +24,7 @@ internal class LeafTest {
 
     @Test
     fun `can create a Chunk leaf instance with an array of elems`() {
-        val chunk = Chunk(arrayOf(1,2,3))
+        val chunk = Chunk(arrayOf(1,2,3), 3, 3)
         assertThat(chunk).isNotNull()
         assertThat(chunk.level).isEqualTo(0)
         assertThat(chunk.size).isEqualTo(3)

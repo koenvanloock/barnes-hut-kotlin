@@ -10,4 +10,7 @@ object BarnesHutConstants {
     val theta = 0.5f
 
     val eliminationThreshold = 0.5f
+
+    val SECTOR_PRECISION = 8
+
 }

@@ -10,7 +10,7 @@ sealed class Quad {
     abstract val centerY: Float
     abstract val size: Float
     abstract val total: Int
-    abstract fun insert(body: Body): Quad
+    abstract infix fun insert(body: Body): Quad
 }
 
 data class Empty(

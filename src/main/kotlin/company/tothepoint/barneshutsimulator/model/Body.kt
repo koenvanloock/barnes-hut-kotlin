@@ -56,7 +56,7 @@ data class Body (val mass: Float, val x: Float, val y: Float, val xSpeed: Float,
         }
 
     fun distance(x0: Float, y0: Float, x1: Float, y1: Float): Float =
-            Math.sqrt((x1 - x0).toDouble() * (x1 - x0) + (y1 - y0) * (y1 - y0)).toFloat()
+            Math.sqrt(((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0)).toDouble()).toFloat()
 
     fun force(m1: Float, m2: Float, dist: Float): Float = gee * m1 * m2 / (dist * dist)
 }

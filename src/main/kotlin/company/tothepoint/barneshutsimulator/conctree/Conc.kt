@@ -54,6 +54,48 @@ sealed class Conc<T> {
             }
         }
 
+        fun <T, U> traverse(conc: Conc<T>, f: (T) -> U): Unit {
+            when (conc) {
+                is Fork -> {
+                    traverse(conc.left, f)
+                    traverse(conc.right, f)
+                }
+                is Single -> f(conc.elem)
+                is Chunk -> {
+                    val a = conc.elems
+                    val size = conc.size
+                    var i = 0
+                    while (i < size) {
+                        f(a[i])
+                        i += 1
+                    }
+                }
+                is Empty -> {
+                }
+                is Append -> {
+                    traverse(conc.left, f)
+                    traverse(conc.right, f)
+                }
+            }
+        }
+
+        fun <T> appendTop(xs: Conc<T>, ys: Leaf<T>): Conc<T> = when (xs) {
+            is Append -> append(xs, ys)
+            is Fork -> Append(xs, ys)
+            is Empty -> ys
+            is Leaf -> Fork(xs, ys)
+        }
+
+        private fun <T> append(xs: Append<T>, ys: Conc<T>): Conc<T> =
+                if (xs.right.level > ys.level) Append(xs, ys)
+                else {
+                    val zs = Fork(xs.right, ys)
+                    val lefts = xs.left
+                    when (lefts) {
+                        is Append -> append(lefts, zs)
+                        else -> if (lefts.level <= zs.level) Fork(lefts, zs) else Append(lefts, zs)
+                    }
+                }
     }
 }
 
@@ -88,8 +130,7 @@ data class Single<T>(val elem: T) : Leaf<T>() {
     override fun toString() = "Single($elem)"
 }
 
-data class Chunk<T>(val elems: Array<T>) : Leaf<T>() {
+data class Chunk<T>(val elems: Array<T>, override val size: Int, val k: Int) : Leaf<T>() {
     override val level = 0
-    override val size = elems.size
-    override fun toString() = "Chunk(${elems.joinToString(",")}, size: $size)"
+    override fun toString() = "Chunk(${elems.joinToString(",")}, size: $size, $k)"
 }
