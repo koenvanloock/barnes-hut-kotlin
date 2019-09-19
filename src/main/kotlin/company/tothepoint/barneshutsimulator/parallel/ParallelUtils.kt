@@ -7,7 +7,7 @@ import java.util.concurrent.RecursiveTask
 
 object ParallelUtils {
 
-    val forkjoinPool = ForkJoinPool()
+    val forkjoinPool = ForkJoinPool(4)
 
     abstract class TaskScheduler {
         abstract fun <T> schedule(body: () -> T): ForkJoinTask<T>

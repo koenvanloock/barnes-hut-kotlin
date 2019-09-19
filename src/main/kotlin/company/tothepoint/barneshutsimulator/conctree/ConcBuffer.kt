@@ -6,7 +6,7 @@ import company.tothepoint.barneshutsimulator.utils.ArrayUtils.emptyArrayOfSize
 
 class ConcBuffer(val k: Int, var conc: Conc<Body>) {
 
-    constructor() : this(128, Empty as Conc<Body>) {}
+    constructor() : this(128, Empty as Conc<Body>)
 
     private var chunk: Array<Body> = emptyArrayOfSize(k)
     private var lastSize: Int = 0
@@ -59,9 +59,9 @@ class ConcBuffer(val k: Int, var conc: Conc<Body>) {
 
     fun <T, U> Conc<T>.forEach(f: (T) -> U) = Conc.traverse(this, f)
 
-    fun <U> foldLeft(emptyQuad: U, f: (U, Body) -> U): U {
-        var result = emptyQuad
-        this.foreach { f(result, it) }
+    fun <U> foldLeft(quad: U, f: (U, Body) -> U): U {
+        var result = quad
+        this.foreach { result = f(result, it) }
         return result
     }
 

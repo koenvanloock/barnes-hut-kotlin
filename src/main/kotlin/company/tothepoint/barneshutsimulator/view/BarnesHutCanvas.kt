@@ -13,7 +13,6 @@ import java.awt.image.BufferedImage
 
 class BarnesHutCanvas(val barnesHutController: BarnesHutController) : Canvas(800.0, 600.0) {
 
-
     val MAX_RES = 3000
 
     val pixels = emptyArrayOfSize<Int>(MAX_RES * MAX_RES)
@@ -100,4 +99,5 @@ class BarnesHutCanvas(val barnesHutController: BarnesHutController) : Canvas(800
         }
         drawQuad(0, barnesHutController.quad())
     }
+
 }

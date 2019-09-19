@@ -6,10 +6,11 @@ import company.tothepoint.barneshutsimulator.model.BarnesHutConstants.eliminatio
 import company.tothepoint.barneshutsimulator.model.BarnesHutConstants.gee
 import company.tothepoint.barneshutsimulator.utils.ArrayUtils.emptyArrayOfSize
 import java.util.*
-import java.util.stream.Collectors
 import kotlin.random.Random
 
-class Simulator() {
+class Simulator {
+
+    val timeStatistics = TimeStatistics()
 
     var screen = Boundaries()
 
@@ -79,14 +80,15 @@ class Simulator() {
         val boundaries = computeBoundaries(bodies)
         val sectorMatrix = computeSectorMatrix(bodies, boundaries)
         val quad = computeQuad(sectorMatrix)
-        val filteredBodies = eliminateOutliers(bodies, sectorMatrix, quad)
+        val filteredBodies = bodies  // eliminateOutliers(bodies, sectorMatrix, quad)
         val newBodies = updateBodies(filteredBodies, quad)
 
-        return Pair(newBodies.toTypedArray(), quad)
+        return Pair(newBodies, quad)
     }
 
-    fun computeBoundaries(bodies: Array<Body>): Boundaries =
-            Arrays.stream(bodies).reduce(Boundaries(), this::updateBoundaries, this::mergeBoundaries)
+    fun computeBoundaries(bodies: Array<Body>): Boundaries = timeStatistics.timed("boundaries") {
+        Arrays.stream(bodies).parallel().reduce(Boundaries(), this::updateBoundaries, this::mergeBoundaries)
+    }
 
     fun updateBoundaries(boundaries: Boundaries, body: Body): Boundaries {
         boundaries.minX = Math.min(boundaries.minX, body.x)
@@ -105,10 +107,13 @@ class Simulator() {
         return bounds
     }
 
-    fun computeSectorMatrix(bodies: Array<Body>, boundaries: Boundaries): SectorMatrix =
-            Arrays.stream(bodies).reduce(SectorMatrix(boundaries, SECTOR_PRECISION), { a, b -> a add b }, { a, b -> a combine b })
+    fun computeSectorMatrix(bodies: Array<Body>, boundaries: Boundaries): SectorMatrix = timeStatistics.timed("matrix") {
+        Arrays.stream(bodies).reduce(SectorMatrix(boundaries, SECTOR_PRECISION), { a, b -> a add b }, { a, b -> a combine b })
+    }
 
-    fun computeQuad(sectorMatrix: SectorMatrix): Quad = sectorMatrix.toQuad(parallelismLevel)
+    fun computeQuad(sectorMatrix: SectorMatrix): Quad = timeStatistics.timed("quad") {
+        sectorMatrix.toQuad(parallelismLevel)
+    }
 
     fun eliminateOutliers(bodies: Array<Body>, sectorMatrix: SectorMatrix, quad: Quad): Array<Body> {
         fun isOutlier(b: Body): Boolean {
@@ -151,8 +156,8 @@ class Simulator() {
         return bodies
     }
 
-    fun updateBodies(bodies: Array<Body>, quad: Quad): List<Body> {
-        return bodies.map { it.updated(quad) }
+    fun updateBodies(bodies: Array<Body>, quad: Quad): Array<Body> = timeStatistics.timed("update") {
+        bodies.map { it.updated(quad) }.toTypedArray()
     }
 
     fun updateCores(numberOfCores: Int) {

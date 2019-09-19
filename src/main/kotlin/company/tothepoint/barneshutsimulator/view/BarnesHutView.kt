@@ -7,14 +7,17 @@ import tornadofx.borderpane
 class BarnesHutView : View() {
     val controller: BarnesHutController by inject()
     val barnesHutCanvas = BarnesHutCanvas(controller)
+    val buttonPanel = ButtonPanel(controller)
 
     init {
         controller.setView(barnesHutCanvas)
+        controller.addTimeObserver(buttonPanel)
         controller.initialize()
     }
 
+
     override val root = borderpane() {
-        right = ButtonPanel(controller)
+        right = buttonPanel
         center = barnesHutCanvas
     }
 }

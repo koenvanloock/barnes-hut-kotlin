@@ -42,7 +42,7 @@ class SectorMatrix(val boundaries: Boundaries, val sectorPrecision: Int) {
                 val centerY = boundaries.minY + y * sectorSize + sectorSize / 2
                 var emptyQuad: Quad = Empty(centerX, centerY, sectorSize)
                 val sectorBodies = this (x, y)
-                return sectorBodies.foldLeft(emptyQuad){ a, b -> a insert b}
+                return sectorBodies.foldLeft(emptyQuad){ a, b -> a.insert(b)}
             } else {
                 val nspan = span / 2
                 val nAchievedParallelism = achievedParallelism * 4

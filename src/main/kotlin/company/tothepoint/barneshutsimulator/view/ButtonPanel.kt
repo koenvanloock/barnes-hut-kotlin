@@ -1,6 +1,7 @@
 package company.tothepoint.barneshutsimulator.view
 
 import company.tothepoint.barneshutsimulator.controller.BarnesHutController
+import company.tothepoint.barneshutsimulator.model.TimeStatistics
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.scene.layout.VBox
@@ -8,11 +9,15 @@ import tornadofx.*
 import java.lang.Integer.parseInt
 
 
-class ButtonPanel(controller: BarnesHutController) : VBox() {
+class ButtonPanel(controller: BarnesHutController) : VBox(), StatsObserver {
 
     val items: Array<String> = (1..Runtime.getRuntime().availableProcessors()).map { it.toString() }.toTypedArray()
     val numberOfCores = FXCollections.observableArrayList(*items)
     val selectedNumber = SimpleStringProperty()
+    val  infoBox = textarea {
+        text = "--- Statistics: ---"
+    }
+
 
     init {
         selectedNumber.onChange { controller.updateNumberOfCores(parseInt(it)) }
@@ -59,6 +64,16 @@ class ButtonPanel(controller: BarnesHutController) : VBox() {
                 }
             }
         }
+
+        this += infoBox
     }
 
+    override fun update(timeStatistics: TimeStatistics) {
+        this.infoBox.text = "--- Statistics: ---\n" + timeStatistics.toString()
+    }
+}
+
+
+interface StatsObserver {
+    fun update(timeStatistics: TimeStatistics)
 }

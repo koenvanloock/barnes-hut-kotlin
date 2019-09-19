@@ -2,11 +2,13 @@ package company.tothepoint.barneshutsimulator.controller
 
 import company.tothepoint.barneshutsimulator.simulator.Simulator
 import company.tothepoint.barneshutsimulator.view.BarnesHutCanvas
+import company.tothepoint.barneshutsimulator.view.StatsObserver
 import tornadofx.Controller
 import javax.swing.SwingUtilities
 
 class BarnesHutController() : Controller() {
 
+    private val observers: MutableList<StatsObserver> = mutableListOf()
     private var view: BarnesHutCanvas? = null
     val simulator = Simulator()
     val timer = javax.swing.Timer(0) { e -> stepThroughSimulation() }
@@ -21,7 +23,7 @@ class BarnesHutController() : Controller() {
             val (bodies, quad) = simulator.step(simulator.bodies)
             simulator.bodies = bodies
             simulator.quad = quad
-            // updateInformationBox()
+            notifyTimeObservers()
             view?.repaint()
         }
     }
@@ -51,5 +53,13 @@ class BarnesHutController() : Controller() {
     fun updateTotalBodies(total: Int) = simulator.updateTotalBodies(total)
 
     fun updateNumberOfCores(cores: Int) = simulator.updateCores(cores)
+
+    fun addTimeObserver(observer: StatsObserver) {
+        this.observers.add(observer)
+    }
+
+    fun notifyTimeObservers() {
+        observers.forEach { it.update(simulator.timeStatistics) }
+    }
 
 }
