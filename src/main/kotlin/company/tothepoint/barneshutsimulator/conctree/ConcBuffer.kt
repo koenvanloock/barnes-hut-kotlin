@@ -65,4 +65,10 @@ class ConcBuffer(val k: Int, var conc: Conc<Body>) {
         return result
     }
 
+    fun filter(f: (Body) -> Boolean): Conc<Body>  = foldLeft(Empty as Conc<Body>) {
+        conc: Conc<Body>, b: Body ->
+            if(f(b)) {
+                Conc.concat(conc, Single(b))
+            } else conc
+        }
 }

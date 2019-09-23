@@ -1,9 +1,11 @@
 package company.tothepoint.barneshutsimulator.simulator
 
+import company.tothepoint.barneshutsimulator.conctree.Conc
 import company.tothepoint.barneshutsimulator.model.*
 import company.tothepoint.barneshutsimulator.model.BarnesHutConstants.SECTOR_PRECISION
 import company.tothepoint.barneshutsimulator.model.BarnesHutConstants.eliminationThreshold
 import company.tothepoint.barneshutsimulator.model.BarnesHutConstants.gee
+import company.tothepoint.barneshutsimulator.utils.ArrayUtils
 import company.tothepoint.barneshutsimulator.utils.ArrayUtils.emptyArrayOfSize
 import java.util.*
 import kotlin.random.Random
@@ -20,7 +22,7 @@ class Simulator {
 
     var shouldRenderQuad = false
 
-    var parallelismLevel = 1
+    var parallelismLevel = 4
 
     var totalBodies = 25000
 
@@ -53,18 +55,19 @@ class Simulator {
                     Body(starmass, starx, stary, starspeedx, starspeedy)
                 }
                 bodyArray[i] = body
-                screen = Boundaries()
-                screen.minX = -2200.0f
-                screen.minY = -1600.0f
-                screen.maxX = 350.0f
-                screen.maxY = 350.0f
             }
+
         }
 
         galaxy(0, bodyArray.size / 8, 300.0f, 0.0f, 0.0f, 0.0f, 0.0f)
         galaxy(bodyArray.size / 8, bodyArray.size / 8 * 7, 350.0f, -1800.0f, -1200.0f, 0.0f, 0.0f)
 
         bodies = bodyArray
+        screen = Boundaries()
+        screen.minX = -2200.0f
+        screen.minY = -1600.0f
+        screen.maxX = 350.0f
+        screen.maxY = 350.0f
     }
 
     fun switchShowRenderQuad() {
@@ -134,9 +137,12 @@ class Simulator {
             } else false
         }
 
-        /*
+        fun outliersInSector(x: Int, y: Int): Conc<Body> = sectorMatrix(x, y).filter { isOutlier(it) }
+
+
         val sectorPrecision = sectorMatrix.sectorPrecision
         val horizontalBorder = emptyArrayOfSize<Pair<Int, Int>>(sectorPrecision * 4)
+        val verticalBorder = emptyArrayOfSize<Pair<Int, Int>>(sectorPrecision * 4)
         for (x in 0 until sectorPrecision) {
             for (y in arrayOf(0, sectorPrecision - 1)) {
                 Pair(x, y)
@@ -147,11 +153,10 @@ class Simulator {
                 Pair(x, y)
             }
         }
-        val borderSectors = horizontalBorder verticalBorder
+        val borderSectors = ArrayUtils.plusplus(horizontalBorder, verticalBorder)
 
         // compute the set of outliers
-        val outliers = Arrays.stream(borderSectors).map { pair -> outliersInSector(pair, y) }.reduce(_ combine _).result
-            */
+        val outliers = Arrays.stream(borderSectors).map { pair -> outliersInSector(pair.first, pair.second) }.reduce(company.tothepoint.barneshutsimulator.conctree.Empty as Conc<Body>){ a,b -> Conc.concatTop(a, b)}
         // filter the bodies that are outliers
         return bodies
     }

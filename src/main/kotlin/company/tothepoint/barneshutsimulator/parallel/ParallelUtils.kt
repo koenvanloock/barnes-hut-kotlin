@@ -4,7 +4,6 @@ import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.ForkJoinTask
 import java.util.concurrent.ForkJoinWorkerThread
 import java.util.concurrent.RecursiveTask
-
 object ParallelUtils {
 
     val forkjoinPool = ForkJoinPool(4)
@@ -36,9 +35,9 @@ object ParallelUtils {
     val scheduler = DynamicVariable<TaskScheduler>(DefaultTaskScheduler())
 
 
-    fun <T> task(body: () -> T) = scheduler.value().schedule(body)
+    fun <T> task(body: () -> T) = scheduler().schedule(body)
 
-    fun <A, B> parallel(taskA: () -> A, taskB: () -> B) = scheduler.value().parallel(taskA, taskB)
+    fun <A, B> parallel(taskA: () -> A, taskB: () -> B) = scheduler().parallel(taskA, taskB)
     fun <A, B, C, D> parallel(taskA: () -> A, taskB: () -> B, taskC: () -> C, taskD: () -> D): Quadruple<A, B, C, D> {
         val ta = task(taskA)
         val tb = task(taskB)

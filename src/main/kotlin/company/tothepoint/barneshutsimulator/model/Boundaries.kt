@@ -6,9 +6,9 @@ class Boundaries() {
 
     var minY = Float.MAX_VALUE
 
-    var maxX = Float.MAX_VALUE
+    var maxX = Float.MIN_VALUE
 
-    var maxY = Float.MAX_VALUE
+    var maxY = Float.MIN_VALUE
 
     fun width() = maxX - minX
 

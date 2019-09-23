@@ -69,17 +69,18 @@ class BarnesHutCanvas(val barnesHutController: BarnesHutController) : Canvas(800
         graphics.color = green
         fun drawQuad(depth: Int, quad: Quad): Unit {
             fun drawRect(fx: Float, fy: Float, fsz: Float, q: Quad, fill: Boolean = false) {
-                val screen = barnesHutController.screen()
-                val x = ((fx - screen.minX) / screen.width() * width).toInt()
-                val y = ((fy - screen.minY) / screen.height() * height).toInt()
-                val w = (((fx + fsz - screen.minX) / screen.width() * width) - x).toInt()
-                val h = (((fy + fsz - screen.minY) / screen.height() * height) - y).toInt()
+                fun screen() = barnesHutController.screen()
+                val x = ((fx - screen().minX) / screen().width() * width).toInt()
+                val y = ((fy - screen().minY) / screen().height() * height).toInt()
+                val w = (((fx + fsz - screen().minX) / screen().width() * width) - x).toInt()
+                val h = (((fy + fsz - screen().minY) / screen().height() * height) - y).toInt()
                 graphics.drawRect(x, y, w, h)
                 if (fill) graphics.fillRect(x, y, w, h)
                 if (depth <= 5) graphics.drawString("#:" + q.total, x + w / 2, y + h / 2)
             }
 
             when (quad) {
+
                 is Fork -> {
                     val cx = quad.centerX
                     val cy = quad.centerY

@@ -6,10 +6,10 @@ class DynamicVariable<T>(init: T) {
          override fun initialValue() = init
     }
 
-    fun value(): T = t1.get()
+    operator fun invoke(): T = t1.get()
 
     fun <S> withValue(newVal: T, thunk: () -> S) {
-        val oldval = value()
+        val oldval = invoke()
         t1.set(newVal)
         try {
             thunk()
@@ -19,6 +19,6 @@ class DynamicVariable<T>(init: T) {
     }
 
     fun value_ (newVal:T): Unit = t1.set(newVal)
-    override fun toString() = "DynamicVariable(${value()})"
+    override fun toString() = "DynamicVariable(${invoke()})"
 
 }
